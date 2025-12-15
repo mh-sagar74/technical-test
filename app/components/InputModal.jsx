@@ -16,7 +16,7 @@ import { Icon, CloseIcon } from '@/components/ui/icon';
 import { Input, InputField } from '@/components/ui/input';
 import { useState } from 'react';
 
-export default function InputModal({ isOpen, onClose, onAdd }) {
+export default function InputModal({ isOpen, onClose, onAdd, isDelete }) {
 
   const [folderName, setFolderName] = useState("");
 
@@ -40,21 +40,36 @@ export default function InputModal({ isOpen, onClose, onAdd }) {
         <ModalBackdrop />
         <ModalContent>
           <ModalHeader>
-            <Heading size="lg">Create Folder</Heading>
+            {isDelete ? <Heading size="lg">Delete Folder</Heading> : <Heading size="lg">Create Folder</Heading>}
             <ModalCloseButton>
               <Icon as={CloseIcon} />
             </ModalCloseButton>
           </ModalHeader>
           <ModalBody>
-            <Text>Please enter your folder name here</Text>
-            <Input>
-              <InputField placeholder="New Folder" type="text"
-                value={folderName} onChange={(e) => setFolderName(e.target.value)}
-              />
-            </Input>
+            {isDelete ? (
+              <Text>Are you sure you want to delete this folder?</Text>
+            ) : (
+              <>
+                <Text>Please enter your folder name here.</Text>
+                <Input>
+                  <InputField placeholder="New Folder" type="text"
+                    value={folderName} onChange={(e) => setFolderName(e.target.value)}
+                  />
+                </Input>
+              </>
+            )}
           </ModalBody>
           <ModalFooter>
-            <Button
+            {isDelete ? <Button
+              variant="outline"
+              action="secondary"
+              className="mr-3"
+              onPress={() => {
+                onClose(false);
+              }}
+            >
+              <ButtonText>No</ButtonText>
+            </Button> : <Button
               variant="outline"
               action="secondary"
               className="mr-3"
@@ -63,13 +78,24 @@ export default function InputModal({ isOpen, onClose, onAdd }) {
               }}
             >
               <ButtonText>Cancel</ButtonText>
-            </Button>
-            <Button
-              onPress={handleSubmit}
-              disabled={!folderName.trim()}
-            >
-              <ButtonText>Create</ButtonText>
-            </Button>
+            </Button>}
+            {isDelete ? (
+              <Button
+                onPress={() => {
+                  onAdd();
+                  onClose(false);
+                }}
+              >
+                <ButtonText>Yes</ButtonText>
+              </Button>
+            ) : (
+              <Button
+                onPress={handleSubmit}
+                disabled={!folderName.trim()}
+              >
+                <ButtonText>Create</ButtonText>
+              </Button>
+            )}
           </ModalFooter>
         </ModalContent>
       </Modal>

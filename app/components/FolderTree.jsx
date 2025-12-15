@@ -13,6 +13,8 @@ export default function FolderTree() {
   const [folders, setFolders] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newFolderParentId, setNewFolderParentId] = useState(null);
+  const [isDelete, setIsDelete] = useState(false);
+  const [deleteFolderId, setDeleteFolderId] = useState(null);
   const toast = useToast();
 
   const showToast = (title, action = "success") => {
@@ -44,6 +46,7 @@ export default function FolderTree() {
 
   const handleAddFolderReq = (parentId) => {
     setNewFolderParentId(parentId);
+    setIsDelete(false);
     setIsModalOpen(true);
   }
 
@@ -56,13 +59,21 @@ export default function FolderTree() {
       setFolders(prev => addChildrenTree(prev, newFolderParentId, newFolder));
     }
     setNewFolderParentId(null);
-
     showToast("Folder Created!", "success");
   }
 
   const handleDelete = (id) => {
-    setFolders(prev => deleteChildrenTree(prev, id));
-    showToast("Folder Deleted!", "error");
+    setDeleteFolderId(id);
+    setIsDelete(true);
+    setIsModalOpen(true);
+  }
+
+  const confirmDelete = () => {
+    if (deleteFolderId) {
+      setFolders(prev => deleteChildrenTree(prev, deleteFolderId));
+      showToast("Folder Deleted!", "error");
+      setDeleteFolderId(null);
+    }
   }
 
   return (
@@ -81,7 +92,9 @@ export default function FolderTree() {
         ))}
       </Box>
 
-      <InputModal isOpen={isModalOpen} onClose={setIsModalOpen} onAdd={handleAddFolder} />
+      <InputModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}
+        onAdd={isDelete ? confirmDelete : handleAddFolder}
+        isDelete={isDelete} />
 
       <Text className="text-center text-sm">&#169; Mominul Haque Sagar 2025-{new Date().getFullYear()}</Text>
     </Box>
