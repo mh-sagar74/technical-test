@@ -5,6 +5,7 @@ import { AddIcon, TrashIcon } from '@/components/ui/icon';
 import { Text } from '@/components/ui/text/index.web';
 import { Folder, FolderClosed, FolderOpen } from 'lucide-react';
 import { useState } from 'react';
+import ChildFolder from './ChildFolder';
 
 
 export default function FolderTemp({ folder, onAddChildReq, onDelete }) {
@@ -31,18 +32,8 @@ export default function FolderTemp({ folder, onAddChildReq, onDelete }) {
         </Box>
       </Box>
 
-      {isExpand && hasChildren && (
-        <Box className="ml-6">
-          {folder.children.map(child => (
-            <FolderTemp
-              key={child.id}
-              folder={child}
-              onAddChildReq={onAddChildReq}
-              onDelete={onDelete}
-            />
-          ))}
-        </Box>
-      )}
+      <ChildFolder isExpand={isExpand} hasChildren={hasChildren}
+        folder={folder} onAddChildReq={onAddChildReq} onDelete={onDelete} />
     </>
   )
 }
